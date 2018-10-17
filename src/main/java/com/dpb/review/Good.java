@@ -8,28 +8,17 @@ import java.util.Map;
 
 public class Good {
 
-    private Map<String, List<Object[]>> map;
+    private Map<String, List<Object[]>> map = new HashMap<>();
 
     public boolean add(String key1, String value) {
-        if (map == null) {
-            map = new HashMap<>();
-        }
         List<Object[]> list = map.computeIfAbsent(key1, v -> new ArrayList<>());
         return list.add(new Object[]{value, value.length()});
     }
 
     public int statistics(String v) {
-        int total = 0;
-        if (map != null) {
-            for (List<Object[]> list : map.values()) {
-                for(Object[] objects : list) {
-                    if (v.equals(objects[0])) {
-                        total += (int)objects[1];
-                    }
-                }
-            }
-        }
-        return total;
+        return map.values().stream().mapToInt(l -> l.stream().filter(o -> v.equals(o[0]))
+                                    .mapToInt(o -> (int)o[1]).sum())
+                                    .sum();
     }
 
     public static void main(String[] args) {
